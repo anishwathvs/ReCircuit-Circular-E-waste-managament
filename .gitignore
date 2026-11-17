@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Production build outputs
+dist/
+frontend/dist/
+backend/dist/
+
+# Environment files & Secrets
+.env
+.env.local
+.env.*.local
+*.env
+backend/.env
+frontend/.env
+
+# Database backups & local files
+*.sql
+*.dump
+backup_recircuit_local.sql
+
+# Local uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python & scripts
+__pycache__/
+*.py[cod]
+scripts/__pycache__/

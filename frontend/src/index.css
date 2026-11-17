@@ -1,0 +1,44 @@
+@import 'leaflet/dist/leaflet.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-forest: #084D36;
+  --secondary-green: #16834D;
+  --accent-lime: #62B735;
+  --light-mint: #EBF8E9;
+  --bg-page: #F8FAF7;
+  --text-main: #151A17;
+  --text-muted: #6B756E;
+  --border-line: #E5EBE5;
+}
+
+body {
+  margin: 0;
+  background-color: #F8FAF7;
+  color: #151A17;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Manrope', 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F8FAF7;
+}
+::-webkit-scrollbar-thumb {
+  background: #CCD7CE;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #084D36;
+}
+

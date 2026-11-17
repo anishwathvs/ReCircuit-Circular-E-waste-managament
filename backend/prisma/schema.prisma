@@ -1,0 +1,484 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+  AGENT
+  RETAILER
+}
+
+enum ProductStatus {
+  SUBMITTED
+  APPROVED
+  AGENT_ASSIGNED
+  PICKUP_SCHEDULED
+  COLLECTED
+  INSPECTION_PENDING
+  INSPECTED
+  VALUATION_PROPOSED
+  VALUATION_ACCEPTED
+  VALUATION_REJECTED
+  IN_REFURBISHMENT
+  REFURBISHED
+  QUALITY_VERIFIED
+  RECYCLE_PENDING
+  RECYCLED
+  LISTED_FOR_SALE
+  SOLD
+  PAYMENT_COMPLETED
+}
+
+enum PickupStatus {
+  PENDING
+  ASSIGNED
+  IN_PROGRESS
+  COLLECTED
+  CANCELLED
+}
+
+enum InspectionRecommendation {
+  REFURBISH
+  RECYCLE
+}
+
+enum ValuationStatus {
+  PROPOSED
+  ACCEPTED
+  REJECTED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id                    String          @id @default(uuid())
+  email                 String          @unique
+  password              String
+  name                  String
+  role                  Role            @default(USER)
+  phone                 String?
+  avatar                String?
+  address               String?
+  city                  String?
+  pincode               String?
+  
+  // Production Auth & Security
+  isEmailVerified       Boolean         @default(true)
+  emailVerifyToken      String?
+  passwordResetToken    String?
+  passwordResetExpires  DateTime?
+  tokenVersion          Int             @default(1)
+  
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  // Relations
+  agentProfile          Agent?
+  retailerProfile       Retailer?
+  products              Product[]
+  pickupRequests        PickupRequest[]
+  orders                Order[]
+  payouts               UserPayout[]
+  notifications         Notification[]
+  auditLogs             AuditLog[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Agent {
+  id               String          @id @default(uuid())
+  userId           String          @unique
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeId       String          @unique
+  vehicleType      String?         @default("Two-Wheeler EV")
+  serviceArea      String?         @default("Chennai Central")
+  active           Boolean         @default(true)
+  currentLat       Float?          @default(12.9815)
+  currentLng       Float?          @default(80.2180)
+  completedPickups Int             @default(0)
+  rating           Float           @default(4.9)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  pickupRequests   PickupRequest[]
+  inspections      Inspection[]
+}
+
+model Retailer {
+  id                 String          @id @default(uuid())
+  userId             String          @unique
+  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName       String
+  gstNumber          String?
+  businessAddress    String?
+  city               String?
+  isVerified         Boolean         @default(true)
+  totalPurchases     Float           @default(0)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  orders             Order[]
+}
+
+model Product {
+  id                String          @id @default(uuid())
+  customId          String          @unique // e.g. RC-2026-00142
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  category          String          // Laptop, Motherboard, Battery, RAM, CPU, GPU, Mobile, etc.
+  brand             String          // Dell, HP, Lenovo, Apple, Asus, etc.
+  model             String          // Inspiron 5570, Latitude 5420, etc.
+  ageYears          Float?          @default(2.5)
+  condition         String          // Working, Minor Fault, Dead/Damaged, For Parts
+  problemDesc       String          // e.g. Hinged issue, slow performance
+  images            String[]        @default([])
+  serialNumber      String?
+  
+  currentStatus     ProductStatus   @default(SUBMITTED)
+  
+  estimatedValue    Float?          @default(0)
+  finalPrice        Float?          @default(0)
+  userPayoutAmount  Float?          @default(0)
+  
+  qrCodeUrl         String?
+  qrCodeSvg         String?         @db.Text
+  
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  // 1-to-1 & 1-to-many
+  pickupRequest     PickupRequest?
+  inspection        Inspection?
+  valuation         Valuation?
+  refurbishment     Refurbishment?
+  historyEvents     ProductHistory[]
+  listing           MarketplaceListing?
+  orderItem         OrderItem?
+  transaction       Transaction?
+  payout            UserPayout?
+  recyclingRecord   RecyclingRecord?
+
+  @@index([customId])
+  @@index([currentStatus])
+  @@index([userId])
+}
+
+model PickupRequest {
+  id                String          @id @default(uuid())
+  requestId         String          @unique // e.g. REQ-2847
+  productId         String          @unique
+  product           Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agentId           String?
+  agent             Agent?          @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  
+  pickupAddress     String
+  city              String          @default("Chennai")
+  pincode           String?
+  latitude          Float?          @default(12.9716)
+  longitude         Float?          @default(80.2206)
+  preferredDate     DateTime
+  preferredTimeSlot String          @default("4:00 PM - 6:00 PM")
+  
+  status            PickupStatus    @default(PENDING)
+  agentNotes        String?
+  collectionNotes   String?
+  collectionImages  String[]        @default([])
+  collectedAt       DateTime?
+  
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([requestId])
+  @@index([status])
+  @@index([agentId])
+}
+
+model Inspection {
+  id                     String                    @id @default(uuid())
+  productId              String                    @unique
+  product                Product                   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  agentId                String
+  agent                  Agent                     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  
+  physicalCondition      String                    // Good, Scratched, Cracked, Heavy Wear
+  powerOnStatus          Boolean                   @default(false)
+  hardwareCondition      String                    // Operational, Faulty, Dead
+  batteryHealth          Int?                      @default(75) // Percentage
+  damagedParts           String[]                  @default([])
+  missingParts           String[]                  @default([])
+  recommendation         InspectionRecommendation  @default(REFURBISH)
+  
+  inspectionNotes        String?
+  photos                 String[]                  @default([])
+  adminApproved          Boolean                   @default(false)
+  reviewedAt             DateTime?
+  
+  createdAt              DateTime                  @default(now())
+  updatedAt              DateTime                  @updatedAt
+}
+
+model Valuation {
+  id                   String           @id @default(uuid())
+  productId            String           @unique
+  product              Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  estimatedResaleValue Float            @default(0)
+  refurbishmentCost    Float            @default(0)
+  collectionCost       Float            @default(300)
+  platformShare        Float            @default(0)
+  userPayoutProposed   Float            @default(0)
+  
+  status               ValuationStatus  @default(PROPOSED)
+  userRemarks          String?
+  approvedAt           DateTime?
+  
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+}
+
+model Refurbishment {
+  id                 String          @id @default(uuid())
+  productId          String          @unique
+  product            Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  technicianName     String          @default("Arun Kumar (Lead Hardware Tech)")
+  repairDescription  String
+  componentsReplaced String[]        @default([])
+  repairCost         Float           @default(0)
+  
+  hardwareTestPassed Boolean         @default(true)
+  batteryTestPassed  Boolean         @default(true)
+  stressTestPassed   Boolean         @default(true)
+  testingStatus      String          @default("Passed All Diagnostics")
+  
+  qualityApproved    Boolean         @default(false)
+  certifiedAt        DateTime?
+  warrantyMonths     Int             @default(6)
+  certificateNumber  String?
+  
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+}
+
+model ProductHistory {
+  id          String   @id @default(uuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  stepNumber  Int      @default(1)
+  title       String   // e.g. "Registered by User", "Collected by Agent", "Inspected & Tested", "Refurbished", "Sold to Retailer"
+  description String
+  actorName   String   // e.g. "Anishwath V", "Rakesh K", "ReCircuit Labs"
+  actorRole   String   // USER, AGENT, ADMIN, TECHNICIAN, RETAILER
+  timestamp   DateTime @default(now())
+  metadata    Json?
+
+  @@index([productId])
+  @@index([timestamp])
+}
+
+model MarketplaceListing {
+  id             String      @id @default(uuid())
+  productId      String      @unique
+  product        Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  title          String      // e.g. "Dell Latitude 5420"
+  category       String
+  brand          String
+  model          String
+  conditionGrade String      @default("Grade A - Certified Refurbished")
+  sellingPrice   Float
+  originalPrice  Float
+  specs          Json?
+  warranty       String      @default("6 Months ReCircuit Certified Warranty")
+  images         String[]    @default([])
+  isAvailable    Boolean     @default(true)
+  listedAt       DateTime    @default(now())
+  
+  orderItems     OrderItem[]
+
+  @@index([isAvailable])
+  @@index([category])
+  @@index([brand])
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  orderNumber     String      @unique // e.g. ORD-2026-8901
+  retailerId      String
+  retailer        Retailer    @relation(fields: [retailerId], references: [id], onDelete: Cascade)
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  totalAmount     Float
+  status          OrderStatus @default(CONFIRMED)
+  shippingAddress String
+  invoiceNumber   String?
+  invoiceUrl      String?
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  items           OrderItem[]
+  transaction     Transaction?
+
+  @@index([orderNumber])
+  @@index([retailerId])
+}
+
+model OrderItem {
+  id          String              @id @default(uuid())
+  orderId     String
+  order       Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  listingId   String
+  listing     MarketplaceListing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  productId   String              @unique
+  product     Product             @relation(fields: [productId], references: [id], onDelete: Cascade)
+  price       Float
+
+  @@index([orderId])
+}
+
+model Transaction {
+  id                 String       @id @default(uuid())
+  txnNumber          String       @unique // e.g. TXN-2026-44021
+  idempotencyKey     String?      @unique
+  orderId            String?      @unique
+  order              Order?       @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  productId          String       @unique
+  product            Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  retailerAmount     Float        // e.g. 28500
+  refurbishmentCost  Float        // e.g. 2200
+  logisticsCost      Float        // e.g. 500
+  platformProfit     Float        // e.g. 3500
+  userPayout         Float        // e.g. 22300
+  
+  paymentIntentId    String?
+  gatewaySignature   String?
+  status             String       @default("COMPLETED")
+  createdAt          DateTime     @default(now())
+}
+
+model UserPayout {
+  id             String       @id @default(uuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId      String       @unique
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  amount         Float
+  status         PayoutStatus @default(COMPLETED)
+  paymentMethod  String       @default("UPI / Bank Transfer")
+  transactionRef String?      // e.g. UTR-9821873918
+  idempotencyKey String?      @unique
+  paidAt         DateTime?
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([userId])
+}
+
+model AuthorizedRecycler {
+  id                   String            @id @default(uuid())
+  name                 String            // e.g. EcoSmelt Circular Refineries Ltd.
+  cpcbLicenseNumber    String            @unique // Central Pollution Control Board License
+  facilityAddress      String
+  city                 String            @default("Chennai")
+  materialsProcessed   String[]          @default(["PCBs", "Lithium-Ion", "Rare Earth Elements"])
+  contactEmail         String
+  contactPhone         String
+  active               Boolean           @default(true)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  records              RecyclingRecord[]
+}
+
+model RecyclingRecord {
+  id                        String              @id @default(uuid())
+  productId                 String              @unique
+  product                   Product             @relation(fields: [productId], references: [id], onDelete: Cascade)
+  recyclerId                String
+  recycler                  AuthorizedRecycler  @relation(fields: [recyclerId], references: [id], onDelete: Cascade)
+  
+  transferDate              DateTime            @default(now())
+  certificateNumber         String?             // e.g. ZERO-LANDFILL-2026-9901
+  weightKg                  Float               @default(2.2)
+  manifestUrl               String?
+  status                    String              @default("TRANSFERRED") // TRANSFERRED, SMELTED, CERTIFIED
+  completedAt               DateTime?
+  preciousMetalsRecoveredMg Float               @default(320)
+  
+  createdAt                 DateTime            @default(now())
+  updatedAt                 DateTime            @updatedAt
+
+  @@index([recyclerId])
+}
+
+model ProfitSharingRule {
+  id                   String   @id @default(uuid())
+  category             String   @unique // Laptop, Mobile, Motherboard, GPU, etc.
+  platformSharePercent Float    @default(15) // e.g. 15%
+  minRefurbFee         Float    @default(1000)
+  collectionFee        Float    @default(300)
+  active               Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, SUCCESS, WARNING, ALERT
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  action     String   // e.g. "APPROVE_VALUATION", "ASSIGN_AGENT", "COMPLETE_INSPECTION"
+  entityType String   // "PRODUCT", "INSPECTION", "ORDER", "PAYOUT", "RECYCLING"
+  entityId   String
+  details    Json?
+  ipAddress  String?  @default("127.0.0.1")
+  createdAt  DateTime @default(now())
+
+  @@index([entityType])
+  @@index([createdAt])
+}

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAF7" />
+      <stop offset="100%" stop-color="#EBF3ED" />
+    </linearGradient>
+    <linearGradient id="acerCasing" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2D3330" />
+      <stop offset="50%" stop-color="#191D1B" />
+      <stop offset="100%" stop-color="#0E110F" />
+    </linearGradient>
+    <filter id="packShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#084D36" flood-opacity="0.14" />
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <rect width="600" height="360" fill="url(#bgGlow)" rx="24" />
+
+  <g filter="url(#packShadow)">
+    <!-- Asymmetrical Acer Battery Shape with top right battery connector wire -->
+    <path d="M 90 115 L 430 115 L 430 145 L 510 145 L 510 235 L 90 235 Z" fill="url(#acerCasing)" stroke="#454D49" stroke-width="1.5" />
+
+    <!-- 4 Cell Internal Blocks -->
+    <line x1="175" y1="117" x2="175" y2="233" stroke="#0B0D0C" stroke-width="2.5" />
+    <line x1="260" y1="117" x2="260" y2="233" stroke="#0B0D0C" stroke-width="2.5" />
+    <line x1="345" y1="117" x2="345" y2="233" stroke="#0B0D0C" stroke-width="2.5" />
+
+    <!-- Cable socket wire assembly -->
+    <rect x="445" y="125" width="24" height="15" rx="3" fill="#1C211E" stroke="#3D4540" />
+    <line x1="452" y1="120" x2="452" y2="140" stroke="#EF4444" stroke-width="2" />
+    <line x1="457" y1="120" x2="457" y2="140" stroke="#111827" stroke-width="2" />
+    <line x1="462" y1="120" x2="462" y2="140" stroke="#10B981" stroke-width="2" />
+
+    <!-- Screw Mount Wings -->
+    <circle cx="105" cy="128" r="4.5" fill="#4B5550" stroke="#101311" />
+    <circle cx="495" cy="223" r="4.5" fill="#4B5550" stroke="#101311" />
+
+    <!-- Acer Genuine Component Label -->
+    <rect x="110" y="140" width="220" height="80" rx="5" fill="#F4F6F3" stroke="#CBD5E1" />
+    
+    <!-- Acer Green Logo -->
+    <text x="125" y="165" font-family="Arial, sans-serif" font-size="18" font-weight="900" fill="#83B81A">acer</text>
+    <text x="175" y="163" font-family="sans-serif" font-size="11" font-weight="800" fill="#1E293B">AC14B8K Battery</text>
+    <text x="125" y="179" font-family="monospace" font-size="9" fill="#084D36" font-weight="700">15.2V === 2365mAh 36Wh</text>
+    <text x="125" y="192" font-family="sans-serif" font-size="8" fill="#475569">Part Number: KT.0040G.004 • 4-Cell Li-ion</text>
+    <text x="125" y="204" font-family="sans-serif" font-size="7.5" font-weight="700" fill="#DC2626">CAUTION: Do not disassemble or crush</text>
+    <text x="125" y="214" font-family="monospace" font-size="7.5" fill="#64748B">Acer Inc. Tested &amp; Certified</text>
+  </g>
+</svg>

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAF7" />
+      <stop offset="100%" stop-color="#EBF3ED" />
+    </linearGradient>
+    <linearGradient id="cylGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3C423E" />
+      <stop offset="25%" stop-color="#242926" />
+      <stop offset="70%" stop-color="#141715" />
+      <stop offset="100%" stop-color="#2E3330" />
+    </linearGradient>
+    <filter id="packShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#084D36" flood-opacity="0.14" />
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <rect width="600" height="360" fill="url(#bgGlow)" rx="24" />
+
+  <g filter="url(#packShadow)">
+    <!-- Base Mounting Frame & Guide Rails -->
+    <rect x="80" y="100" width="440" height="40" rx="6" fill="#151816" stroke="#2B302D" />
+    
+    <!-- ThinkPad Latch Mechanism -->
+    <rect x="420" y="88" width="50" height="14" rx="3" fill="#E11D48" />
+    <text x="445" y="99" font-family="sans-serif" font-size="8" font-weight="900" fill="#FFFFFF" text-anchor="middle">LOCK ▶</text>
+    
+    <!-- Modular Interface Pins (Gold/Yellow) -->
+    <rect x="130" y="92" width="70" height="10" rx="2" fill="#EAB308" stroke="#CA8A04" />
+    <line x1="140" y1="92" x2="140" y2="102" stroke="#151816" stroke-width="2" />
+    <line x1="152" y1="92" x2="152" y2="102" stroke="#151816" stroke-width="2" />
+    <line x1="164" y1="92" x2="164" y2="102" stroke="#151816" stroke-width="2" />
+    <line x1="176" y1="92" x2="176" y2="102" stroke="#151816" stroke-width="2" />
+    <line x1="188" y1="92" x2="188" y2="102" stroke="#151816" stroke-width="2" />
+
+    <!-- 6 Cylindrical 18650 Cells Form Factor (Bulging Rounded Lobes) -->
+    <g>
+      <rect x="80" y="130" width="70" height="120" rx="35" fill="url(#cylGrad)" stroke="#4A524E" stroke-width="1.5" />
+      <rect x="148" y="130" width="70" height="120" rx="35" fill="url(#cylGrad)" stroke="#4A524E" stroke-width="1.5" />
+      <rect x="216" y="130" width="70" height="120" rx="35" fill="url(#cylGrad)" stroke="#4A524E" stroke-width="1.5" />
+      <rect x="284" y="130" width="70" height="120" rx="35" fill="url(#cylGrad)" stroke="#4A524E" stroke-width="1.5" />
+      <rect x="352" y="130" width="70" height="120" rx="35" fill="url(#cylGrad)" stroke="#4A524E" stroke-width="1.5" />
+      <rect x="420" y="130" width="70" height="120" rx="35" fill="url(#cylGrad)" stroke="#4A524E" stroke-width="1.5" />
+    </g>
+
+    <!-- Center Label Panel -->
+    <rect x="150" y="150" width="270" height="80" rx="6" fill="#1C1F1D" stroke="#374151" />
+    
+    <!-- Lenovo / ThinkPad Badge -->
+    <rect x="165" y="162" width="60" height="20" rx="3" fill="#E11D48" />
+    <text x="195" y="176" font-family="Arial, sans-serif" font-size="11" font-weight="900" fill="#FFFFFF" text-anchor="middle">lenovo</text>
+    
+    <text x="235" y="174" font-family="sans-serif" font-size="13" font-weight="800" fill="#F3F4F6">ThinkPad Battery 68+</text>
+    <text x="235" y="188" font-family="monospace" font-size="9" fill="#22C55E" font-weight="700">FRU 0C52862 / ASM 45N1126</text>
+    <text x="165" y="210" font-family="sans-serif" font-size="9" fill="#9CA3AF">Rating: 10.8V === 4.4Ah 48Wh | 6-Cell Cylindrical Pack</text>
+    <text x="165" y="222" font-family="sans-serif" font-size="8" fill="#FACC15">Certified Genuine OEM Component for T440 / T450 / X240 / X250</text>
+  </g>
+</svg>

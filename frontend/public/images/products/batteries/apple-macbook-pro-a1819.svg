@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAF7" />
+      <stop offset="100%" stop-color="#EBF3ED" />
+    </linearGradient>
+    <linearGradient id="applePouch" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#222624" />
+      <stop offset="60%" stop-color="#141715" />
+      <stop offset="100%" stop-color="#0A0C0B" />
+    </linearGradient>
+    <filter id="packShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#084D36" flood-opacity="0.14" />
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <rect width="600" height="360" fill="url(#bgGlow)" rx="24" />
+
+  <g filter="url(#packShadow)">
+    <!-- Central Logic Flex Board & Ribbon (Signature Apple Architecture) -->
+    <path d="M 270 95 L 330 95 L 330 250 L 270 250 Z" fill="#1C1F1D" stroke="#333A36" />
+    <!-- Gold contact bus pins -->
+    <rect x="282" y="90" width="36" height="10" rx="2" fill="#EAB308" />
+    <line x1="288" y1="90" x2="288" y2="100" stroke="#111827" stroke-width="1.5" />
+    <line x1="294" y1="90" x2="294" y2="100" stroke="#111827" stroke-width="1.5" />
+    <line x1="300" y1="90" x2="300" y2="100" stroke="#111827" stroke-width="1.5" />
+    <line x1="306" y1="90" x2="306" y2="100" stroke="#111827" stroke-width="1.5" />
+    <line x1="312" y1="90" x2="312" y2="100" stroke="#111827" stroke-width="1.5" />
+
+    <!-- Flexible interconnect ribbon traces -->
+    <line x1="190" y1="170" x2="270" y2="170" stroke="#CA8A04" stroke-width="5" />
+    <line x1="330" y1="170" x2="410" y2="170" stroke="#CA8A04" stroke-width="5" />
+
+    <!-- 3 Distinct Lithium-Polymer Pouch Cells -->
+    <!-- Left Wing Pouch -->
+    <rect x="70" y="115" width="130" height="125" rx="8" fill="url(#applePouch)" stroke="#3E4541" stroke-width="1.5" />
+    <!-- Center Pouch -->
+    <rect x="235" y="125" width="130" height="110" rx="8" fill="url(#applePouch)" stroke="#3E4541" stroke-width="1.5" />
+    <!-- Right Wing Pouch -->
+    <rect x="400" y="115" width="130" height="125" rx="8" fill="url(#applePouch)" stroke="#3E4541" stroke-width="1.5" />
+
+    <!-- Apple Aesthetic Minimal Laser-Printed Typography on Center Pouch -->
+    <path d="M 297 142 C 297 138 299 135 301 133 C 299 133 296 135 294 138 C 293 140 293 143 294 145 C 296 145 297 143 297 142 Z" fill="#9CA3AF" />
+    <path d="M 303 146 C 300 146 298 144 296 144 C 294 144 292 146 289 146 C 286 146 283 142 281 138 C 279 133 281 127 286 127 C 289 127 291 128 293 128 C 295 128 297 127 300 127 C 302 127 305 128 307 130 C 304 132 304 136 307 138 C 305 142 303 146 303 146 Z" fill="#9CA3AF" />
+
+    <text x="300" y="165" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="10" font-weight="700" fill="#FFFFFF" text-anchor="middle">MacBook Pro 13" Battery</text>
+    <text x="300" y="178" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="8.5" fill="#9CA3AF" text-anchor="middle">Model A1819 • 11.41V  49.2Wh  4314mAh</text>
+    <text x="300" y="190" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="7.5" fill="#6B7280" text-anchor="middle">Rechargeable Li-ion Polymer Battery Pack</text>
+    <text x="300" y="202" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="7" font-weight="600" fill="#EF4444" text-anchor="middle">CAUTION: Authorized Service Provider Only</text>
+    <text x="300" y="214" font-family="monospace" font-size="7.5" fill="#10B981" text-anchor="middle">Serial: D868294029HJ37281</text>
+  </g>
+</svg>

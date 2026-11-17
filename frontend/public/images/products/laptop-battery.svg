@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAF7" />
+      <stop offset="100%" stop-color="#EBF3ED" />
+    </linearGradient>
+    <linearGradient id="casingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2D3330" />
+      <stop offset="40%" stop-color="#1E2320" />
+      <stop offset="100%" stop-color="#141715" />
+    </linearGradient>
+    <linearGradient id="bevelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#464F4B" />
+      <stop offset="100%" stop-color="#1E2320" />
+    </linearGradient>
+    <linearGradient id="pinGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D4AF37" />
+      <stop offset="50%" stop-color="#FFDF73" />
+      <stop offset="100%" stop-color="#B8860B" />
+    </linearGradient>
+    <linearGradient id="yellowBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EAB308" />
+      <stop offset="100%" stop-color="#FACC15" />
+    </linearGradient>
+    <filter id="packShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#084D36" flood-opacity="0.16" />
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Background surface matching ReCircuit style -->
+  <rect width="600" height="360" fill="url(#bgGlow)" rx="24" />
+
+  <!-- Shadow & Main Battery Pack Body (Elongated OEM Style) -->
+  <g filter="url(#packShadow)">
+    <!-- Mounting ears/brackets -->
+    <path d="M 50 155 L 75 155 L 75 195 L 50 195 A 6 6 0 0 1 50 155 Z" fill="#1C201E" stroke="#3A423E" stroke-width="1.5" />
+    <circle cx="62" cy="175" r="4.5" fill="#4B5550" stroke="#141715" stroke-width="1" />
+
+    <path d="M 550 155 L 525 155 L 525 195 L 550 195 A 6 6 0 0 0 550 155 Z" fill="#1C201E" stroke="#3A423E" stroke-width="1.5" />
+    <circle cx="538" cy="175" r="4.5" fill="#4B5550" stroke="#141715" stroke-width="1" />
+
+    <!-- Center multi-cell casing -->
+    <rect x="75" y="110" width="450" height="130" rx="14" fill="url(#casingGrad)" stroke="#3E4743" stroke-width="1.5" />
+
+    <!-- Top beveled edge highlight -->
+    <rect x="77" y="112" width="446" height="6" rx="3" fill="url(#bevelGrad)" opacity="0.6" />
+
+    <!-- Cell divider ribs (4 Li-ion cell compartments) -->
+    <line x1="185" y1="112" x2="185" y2="238" stroke="#141715" stroke-width="3" />
+    <line x1="187" y1="112" x2="187" y2="238" stroke="#3E4743" stroke-width="1" />
+
+    <line x1="298" y1="112" x2="298" y2="238" stroke="#141715" stroke-width="3" />
+    <line x1="300" y1="112" x2="300" y2="238" stroke="#3E4743" stroke-width="1" />
+
+    <line x1="410" y1="112" x2="410" y2="238" stroke="#141715" stroke-width="3" />
+    <line x1="412" y1="112" x2="412" y2="238" stroke="#3E4743" stroke-width="1" />
+
+    <!-- Gold Pin Connector Terminal (Top Right / Middle Interface) -->
+    <rect x="250" y="98" width="100" height="16" rx="4" fill="#171A19" stroke="#3E4743" stroke-width="1" />
+    <g transform="translate(258, 102)">
+      <rect x="0" y="0" width="5" height="9" rx="1" fill="url(#pinGrad)" />
+      <rect x="10" y="0" width="5" height="9" rx="1" fill="url(#pinGrad)" />
+      <rect x="20" y="0" width="5" height="9" rx="1" fill="url(#pinGrad)" />
+      <rect x="30" y="0" width="5" height="9" rx="1" fill="url(#pinGrad)" />
+      <rect x="40" y="0" width="5" height="9" rx="1" fill="url(#pinGrad)" />
+      <rect x="50" y="0" width="5" height="9" rx="1" fill="url(#pinGrad)" />
+      <rect x="60" y="0" width="5" height="9" rx="1" fill="url(#pinGrad)" />
+      <rect x="70" y="0" width="5" height="9" rx="1" fill="url(#pinGrad)" />
+      <rect x="80" y="0" width="5" height="9" rx="1" fill="url(#pinGrad)" />
+    </g>
+
+    <!-- Technical Specification Label matching Reference Design -->
+    <rect x="95" y="132" width="410" height="88" rx="8" fill="#151A18" stroke="#2B322F" stroke-width="1" />
+
+    <!-- Yellow Warning Accent Bar -->
+    <rect x="95" y="132" width="10" height="88" rx="2" fill="url(#yellowBar)" />
+
+    <!-- Label Brand & Header -->
+    <text x="118" y="152" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="13" fill="#FFFFFF" letter-spacing="0.5">
+      ReCircuit® CERTIFIED OEM REPLACEMENT BATTERY
+    </text>
+
+    <!-- Type & Spec Details -->
+    <text x="118" y="170" font-family="monospace" font-weight="700" font-size="11" fill="#FACC15">
+      TYPE: 4GVGH | 11.4V === 54Wh | 4-CELL LI-ION POLYMER
+    </text>
+
+    <text x="118" y="186" font-family="system-ui, sans-serif" font-weight="500" font-size="9" fill="#9AA5A0">
+      COMPATIBILITY: Dell Latitude 5420 / 5570 / Precision 3510 Series
+    </text>
+
+    <text x="118" y="202" font-family="system-ui, sans-serif" font-weight="600" font-size="8.5" fill="#62B735">
+      ✓ 100% HEALTH &amp; IMPEDANCE TESTED • OVERCHARGE PROTECTION IC • RoHS COMPLIANT
+    </text>
+
+    <!-- Regulatory icons & QR on label right -->
+    <g transform="translate(440, 142)">
+      <!-- Mini QR on label -->
+      <rect x="0" y="0" width="48" height="48" rx="4" fill="#FFFFFF" />
+      <!-- Stylized QR dots -->
+      <rect x="4" y="4" width="16" height="16" rx="2" fill="#084D36" />
+      <rect x="7" y="7" width="10" height="10" rx="1" fill="#FFFFFF" />
+      <rect x="10" y="10" width="4" height="4" fill="#084D36" />
+
+      <rect x="28" y="4" width="16" height="16" rx="2" fill="#084D36" />
+      <rect x="31" y="7" width="10" height="10" rx="1" fill="#FFFFFF" />
+      <rect x="34" y="10" width="4" height="4" fill="#084D36" />
+
+      <rect x="4" y="28" width="16" height="16" rx="2" fill="#084D36" />
+      <rect x="7" y="31" width="10" height="10" rx="1" fill="#FFFFFF" />
+      <rect x="10" y="34" width="4" height="4" fill="#084D36" />
+
+      <rect x="24" y="24" width="6" height="6" fill="#084D36" />
+      <rect x="34" y="26" width="8" height="4" fill="#084D36" />
+      <rect x="26" y="36" width="18" height="6" fill="#084D36" />
+
+      <text x="24" y="60" text-anchor="middle" font-family="monospace" font-weight="700" font-size="7" fill="#CCD7CE">
+        CERT-RC-BAT
+      </text>
+    </g>
+  </g>
+</svg>
+

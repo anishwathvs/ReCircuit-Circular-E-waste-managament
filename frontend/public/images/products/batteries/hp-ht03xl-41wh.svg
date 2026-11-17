@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAF7" />
+      <stop offset="100%" stop-color="#EBF3ED" />
+    </linearGradient>
+    <linearGradient id="hpCasing" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2D3330" />
+      <stop offset="50%" stop-color="#1B201D" />
+      <stop offset="100%" stop-color="#111412" />
+    </linearGradient>
+    <filter id="packShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#084D36" flood-opacity="0.14" />
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <rect width="600" height="360" fill="url(#bgGlow)" rx="24" />
+
+  <g filter="url(#packShadow)">
+    <!-- Stepped polygon casing characteristic of HP HT03XL -->
+    <path d="M 80 120 L 460 120 L 460 160 L 520 160 L 520 235 L 80 235 Z" fill="url(#hpCasing)" stroke="#424A45" stroke-width="1.5" />
+    
+    <!-- Screw tabs -->
+    <circle cx="95" cy="132" r="5" fill="#374151" stroke="#111412" />
+    <circle cx="505" cy="172" r="5" fill="#374151" stroke="#111412" />
+    <circle cx="95" cy="223" r="5" fill="#374151" stroke="#111412" />
+    <circle cx="505" cy="223" r="5" fill="#374151" stroke="#111412" />
+
+    <!-- 3 Cell partitions -->
+    <line x1="205" y1="120" x2="205" y2="235" stroke="#0B0D0C" stroke-width="2.5" />
+    <line x1="330" y1="120" x2="330" y2="235" stroke="#0B0D0C" stroke-width="2.5" />
+
+    <!-- Interface Connector Harness Cable -->
+    <rect x="470" y="130" width="30" height="22" rx="3" fill="#111827" stroke="#374151" />
+    <line x1="475" y1="141" x2="495" y2="141" stroke="#E5E7EB" stroke-width="4" stroke-dasharray="2 2" />
+
+    <!-- HP OEM White Label -->
+    <rect x="110" y="135" width="200" height="85" rx="5" fill="#FFFFFF" stroke="#D1D5DB" />
+    
+    <!-- HP Round Circular Logo -->
+    <circle cx="135" cy="160" r="16" fill="#0096D6" />
+    <text x="135" y="167" font-family="'Times New Roman', serif" font-size="20" font-style="italic" font-weight="bold" fill="#FFFFFF" text-anchor="middle">hp</text>
+
+    <text x="160" y="155" font-family="sans-serif" font-size="12" font-weight="900" fill="#111827">HP HT03XL</text>
+    <text x="160" y="168" font-family="sans-serif" font-size="9" fill="#4B5553">Regulatory Model: HSTNN-LB8L</text>
+    <text x="160" y="180" font-family="monospace" font-size="9" font-weight="700" fill="#084D36">11.55V === 41.04Wh 3470mAh</text>
+    <text x="120" y="202" font-family="monospace" font-size="8" fill="#374151">HP Spare: L11119-855 • 3-Cell Li-ion</text>
+    <text x="120" y="213" font-family="sans-serif" font-size="7" font-weight="700" fill="#DC2626">WARNING: Replace only with HP certified spare</text>
+  </g>
+</svg>

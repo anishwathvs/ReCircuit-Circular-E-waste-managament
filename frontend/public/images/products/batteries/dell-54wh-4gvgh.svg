@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAF7" />
+      <stop offset="100%" stop-color="#EBF3ED" />
+    </linearGradient>
+    <linearGradient id="casingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#282E2B" />
+      <stop offset="40%" stop-color="#1A1F1C" />
+      <stop offset="100%" stop-color="#101311" />
+    </linearGradient>
+    <filter id="packShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#084D36" flood-opacity="0.14" />
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <rect width="600" height="360" fill="url(#bgGlow)" rx="24" />
+
+  <g filter="url(#packShadow)">
+    <!-- Mounting tabs -->
+    <path d="M 45 155 L 70 155 L 70 195 L 45 195 A 6 6 0 0 1 45 155 Z" fill="#1C201E" stroke="#3A423E" stroke-width="1.5" />
+    <circle cx="57" cy="175" r="4.5" fill="#4B5550" stroke="#101311" stroke-width="1" />
+    <path d="M 555 155 L 530 155 L 530 195 L 555 195 A 6 6 0 0 0 555 155 Z" fill="#1C201E" stroke="#3A423E" stroke-width="1.5" />
+    <circle cx="543" cy="175" r="4.5" fill="#4B5550" stroke="#101311" stroke-width="1" />
+    
+    <!-- Top cable clip tab -->
+    <rect x="270" y="96" width="60" height="16" rx="4" fill="#1A1F1C" stroke="#3A423E" />
+    <rect x="282" y="92" width="36" height="6" rx="2" fill="#D4AF37" />
+
+    <!-- Main elongated 4-cell casing -->
+    <rect x="70" y="110" width="460" height="135" rx="12" fill="url(#casingGrad)" stroke="#3E4743" stroke-width="1.5" />
+
+    <!-- 4 Cell dividers -->
+    <line x1="185" y1="112" x2="185" y2="243" stroke="#0E1110" stroke-width="2.5" />
+    <line x1="300" y1="112" x2="300" y2="243" stroke="#0E1110" stroke-width="2.5" />
+    <line x1="415" y1="112" x2="415" y2="243" stroke="#0E1110" stroke-width="2.5" />
+
+    <!-- OEM Label Surface -->
+    <rect x="195" y="125" width="210" height="105" rx="6" fill="#F4F6F3" stroke="#D1D5DB" stroke-width="1" />
+    
+    <!-- Dell Logo -->
+    <circle cx="225" cy="150" r="14" fill="#007DB8" />
+    <text x="225" y="155" font-family="Arial, sans-serif" font-size="12" font-weight="900" fill="#FFFFFF" text-anchor="middle">DELL</text>
+    
+    <text x="250" y="145" font-family="Arial, sans-serif" font-size="12" font-weight="800" fill="#111827">54Wh Standard</text>
+    <text x="250" y="159" font-family="Arial, sans-serif" font-size="10" font-weight="600" fill="#374151">Rechargeable Li-ion Battery</text>
+    <text x="250" y="172" font-family="monospace" font-size="9" fill="#16834D" font-weight="700">Type 4GVGH • 15.2V === 3500mAh</text>
+    
+    <!-- Specs box -->
+    <rect x="205" y="184" width="190" height="38" rx="4" fill="#E5E7EB" />
+    <text x="215" y="198" font-family="sans-serif" font-size="7.5" fill="#374151">DP/N: 01P6KD | Made in China | 4-Cell</text>
+    <text x="215" y="210" font-family="sans-serif" font-size="7.5" font-weight="700" fill="#B91C1C">CAUTION: Do not expose to temp above 65°C</text>
+  </g>
+</svg>

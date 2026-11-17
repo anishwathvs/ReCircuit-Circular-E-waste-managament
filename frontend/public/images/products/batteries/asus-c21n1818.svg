@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAF7" />
+      <stop offset="100%" stop-color="#EBF3ED" />
+    </linearGradient>
+    <linearGradient id="asusCasing" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2F3632" />
+      <stop offset="50%" stop-color="#1B201D" />
+      <stop offset="100%" stop-color="#101311" />
+    </linearGradient>
+    <filter id="packShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#084D36" flood-opacity="0.14" />
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <rect width="600" height="360" fill="url(#bgGlow)" rx="24" />
+
+  <g filter="url(#packShadow)">
+    <!-- Top cable socket -->
+    <rect x="260" y="100" width="80" height="15" rx="3" fill="#1C211E" stroke="#3D4540" />
+    <line x1="275" y1="96" x2="325" y2="96" stroke="#EAB308" stroke-width="4" />
+
+    <!-- 2-Cell Extra-Wide Slim Symmetrical Pack -->
+    <rect x="65" y="112" width="470" height="135" rx="10" fill="url(#asusCasing)" stroke="#454E49" stroke-width="1.5" />
+    
+    <!-- Heavy middle spine separating the 2 massive polymer cells -->
+    <rect x="295" y="112" width="10" height="135" fill="#101311" />
+
+    <!-- Screw mounts along periphery -->
+    <circle cx="80" cy="125" r="4.5" fill="#4B5550" stroke="#101311" />
+    <circle cx="520" cy="125" r="4.5" fill="#4B5550" stroke="#101311" />
+    <circle cx="80" cy="235" r="4.5" fill="#4B5550" stroke="#101311" />
+    <circle cx="520" cy="235" r="4.5" fill="#4B5550" stroke="#101311" />
+
+    <!-- Left Cell ASUS Label -->
+    <rect x="85" y="130" width="195" height="100" rx="5" fill="#181D1A" stroke="#2F3632" />
+    
+    <!-- Gold ASUS Typography -->
+    <text x="100" y="158" font-family="'Copperplate', Arial, sans-serif" font-size="18" font-weight="900" fill="#D4AF37" letter-spacing="2">ASUS</text>
+    <text x="100" y="175" font-family="sans-serif" font-size="11" font-weight="700" fill="#F3F4F6">Li-ion Battery Pack C21N1818</text>
+    <text x="100" y="190" font-family="monospace" font-size="9.5" fill="#22C55E" font-weight="700">7.6V === 37Wh 4840mAh</text>
+    <text x="100" y="204" font-family="sans-serif" font-size="8" fill="#9CA3AF">Model: 0B200-03280800 | 2-Cell 2ICP4/59/134</text>
+    <text x="100" y="217" font-family="sans-serif" font-size="8" fill="#D1D5DB">ASUSTeK COMPUTER INC. All Rights Reserved</text>
+
+    <!-- Right Cell Regulatory Grid -->
+    <rect x="320" y="130" width="195" height="100" rx="5" fill="#181D1A" stroke="#2F3632" />
+    <rect x="330" y="140" width="28" height="28" rx="3" fill="#D4AF37" />
+    <text x="344" y="158" font-family="sans-serif" font-size="14" font-weight="900" fill="#111827" text-anchor="middle">CE</text>
+    <text x="368" y="148" font-family="sans-serif" font-size="8" font-weight="700" fill="#F3F4F6">FOR USE WITH ASUS LAPTOPS</text>
+    <text x="368" y="160" font-family="sans-serif" font-size="7.5" fill="#9CA3AF">VivoBook 14 / 15 / X409 / X509 Series</text>
+    <text x="330" y="185" font-family="sans-serif" font-size="7.5" font-weight="700" fill="#EF4444">CAUTION: High voltage internal battery</text>
+    <text x="330" y="198" font-family="monospace" font-size="7.5" fill="#9CA3AF">ReCircuit Certified QA: PASS-99.2%</text>
+    <text x="330" y="210" font-family="monospace" font-size="7.5" fill="#10B981">Battery Health: Grade A+ OEM</text>
+  </g>
+</svg>
