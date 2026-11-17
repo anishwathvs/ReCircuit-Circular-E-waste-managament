@@ -71,7 +71,7 @@ app.use(
       }
 
       if (process.env.NODE_ENV === 'production') {
-        return callback(new Error(`CORS policy rejection: Origin ${origin} not allowed`));
+        return callback(null, false);
       }
 
       callback(null, true);
