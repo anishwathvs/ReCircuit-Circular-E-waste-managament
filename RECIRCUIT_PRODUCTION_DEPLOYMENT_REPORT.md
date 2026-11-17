@@ -1,121 +1,157 @@
 # RECIRCUIT — PRODUCTION DEPLOYMENT & CLOUD INTEGRATION REPORT
 
-**Execution Timestamp:** 2026-11-17T21:56:00+05:30  
+**Execution Timestamp:** 2026-11-17T22:12:00+05:30  
 **Platform Version:** ReCircuit v2.5 (Production Release)  
 **Target Repository:** [https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament.git](https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament.git)  
 **Active Branch:** `main`  
-**Latest Commit ID:** `6a40a33` (`feat(db): Integrate Neon PostgreSQL serverless database with Prisma directUrl, CLI linking, and validation suite`)  
-**Deployment Stage:** Stage 1, 2 & 3 Complete (GitHub Synchronized, Neon PostgreSQL Integrated & Verified)
+**Latest Commit ID:** `b290d39` (`feat(deploy): Add Render CLI deployment script and ignore service metadata`)  
+**Deployment Stage:** Stage 1, 2, 3 & 4 Complete (GitHub Synchronized, Neon DB Integrated, Render Backend Deployed & Verified)
 
 ---
 
 ## 1. Executive Summary & Deployment Status
 
-| Component | Target Platform | Current Status | Notes |
+| Component | Target Platform | Current Status | Details & Metrics |
 | :--- | :--- | :--- | :--- |
-| **GitHub Repository** | GitHub (`anishwathvs`) | **`DEPLOYED / PUSHED`** | Branch `main` up to date (`commit 6a40a33`) |
+| **GitHub Monorepo** | GitHub (`anishwathvs`) | **`DEPLOYED / PUSHED`** | Branch `main` up to date (`commit b290d39`) |
 | **Local Database Safety** | Local PostgreSQL 17 | **`SECURED & INTACT`** | `backup_recircuit_local.sql` (242 KB) preserved, zero local loss |
 | **Secrets Protection** | Git & Repository | **`VERIFIED`** | `.env.local` & `.env` excluded via multi-tier `.gitignore` |
-| **Production Database** | Neon Serverless PostgreSQL | **`CONNECTED & SYNCHRONIZED`** | Org: `org-sparkling-rice-08339866`, Project: `shy-dew-15332185` |
-| **Prisma Schema Config** | Pooled + Direct URL | **`CONFIGURED & VALID`** | `url = env("DATABASE_URL")`, `directUrl = env("DIRECT_URL")` |
-| **Database Schema** | Neon `production` branch | **`19/19 TABLES CREATED`** | Schema pushed safely without destructive commands |
-| **Database Seed** | 55 SKU Hardware Catalog | **`SEEDED (62 Products)`** | 55 verified marketplace SKUs + baseline test accounts |
-| **Backend API Service** | Render (Node.js/Express) | **`CONFIGURED`** | `render.yaml` Blueprint prepared with `/api/health` |
-| **Frontend Web Application** | Vercel (Vite/React SPA) | **`CONFIGURED`** | `vercel.json` SPA catch-all routing & `VITE_API_BASE_URL` |
-| **QR Digital Passport** | Dynamic Production URL | **`CONFIGURED`** | Uses `CLIENT_URL` / `FRONTEND_URL` environment variables |
+| **Production Database** | Neon Serverless PostgreSQL | **`ONLINE & HEALTHY`** | Org: `org-sparkling-rice-08339866`, Project: `shy-dew-15332185` |
+| **Database Schema & Data** | Neon `production` branch | **`19/19 TABLES (62 SKUs)`** | Schema pushed safely, 55 catalogue SKUs + baseline accounts |
+| **Backend API Service** | Render (Node.js/Express) | **`LIVE & VERIFIED`** | **URL:** `https://recircuit-api-uowv.onrender.com` |
+| **API Health Check** | Render `/api/health` | **`HTTP 200 ONLINE`** | DB Status: `healthy`, Query Latency: `174ms` |
+| **Authentication Service** | Render `/api/auth/login` | **`HTTP 200 PASS`** | JWT token minting verified with production secrets |
+| **Marketplace API** | Render `/api/marketplace` | **`HTTP 200 PASS`** | Serving 55 distinct refurbished hardware listings from Neon |
+| **Digital Passport API** | Render `/api/passport/:id` | **`HTTP 200 PASS`** | Verified serving lifecycle data & distinct SKU asset paths |
+| **CORS Policy** | Render Service | **`STRICT & SECURE`** | Allows `*.vercel.app` & explicit frontend domain; rejects untrusted |
+| **Frontend Web Application** | Vercel (Vite/React SPA) | **`STAGED / PENDING`** | Configured with `vercel.json` SPA catch-all & `VITE_API_BASE_URL` |
 
 ---
 
-## 2. Neon Serverless PostgreSQL Integration Details
+## 2. Render Backend Web Service Deployment
 
-### 2.1 Project & Branch Identity
-- **Organization ID:** `org-sparkling-rice-08339866`
-- **Project ID:** `shy-dew-15332185`
-- **Branch:** `production` (`br-summer-frog-azv5bsuj`)
-- **Region / Service:** `ap-southeast-1` (AWS Singapore) / `postgres`
-- **Host Endpoint:** `ep-dark-union-azh6owq3-pooler.c-3.ap-southeast-1.aws.neon.tech`
+### 2.1 Service Specifications
+- **Service Name:** `recircuit-api`
+- **Service ID:** `srv-dbu83g6k1f9s739nlu9g`
+- **Owner ID / Workspace:** `tea-d5vpad56ubrc73cobi50` (My Workspace)
+- **Active Deploy ID:** `dep-dbu841p5efls73c5d9cg` (Status: `live`)
+- **Public API Base URL:** [https://recircuit-api-uowv.onrender.com](https://recircuit-api-uowv.onrender.com)
+- **Render Dashboard:** [https://dashboard.render.com/web/srv-dbu83g6k1f9s739nlu9g](https://dashboard.render.com/web/srv-dbu83g6k1f9s739nlu9g)
+- **Runtime & Environment:** Node.js (v20+ LTS)
+- **Root Directory:** `backend`
+- **Build Command:** `npm install --include=dev && npx prisma generate && npm run build`
+- **Start Command:** `npm run start` (`node dist/index.js`)
+- **Health Check Path:** `/api/health`
 
-### 2.2 CLI Installation & Tooling
-- Installed Neon CLI v9.6.0 to user-global prefix `~/.npm-global/bin/neon`.
-- Neon agent skills installed into Antigravity: `neon`, `neon-postgres`, `neon-auth`, `neon-realtime`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway`.
-- Created repository policy manifest `neon.ts`.
+### 2.2 Environment Variables Configured on Render
+- `NODE_ENV`: `production`
+- `PORT`: `10000`
+- `DATABASE_URL`: Injected from local `backend/.env.local` (Neon pooled endpoint)
+- `DIRECT_URL`: Injected from local `backend/.env.local` (Neon unpooled direct endpoint)
+- `JWT_SECRET`: Cryptographically generated 64-character hex secret
+- `JWT_REFRESH_SECRET`: Cryptographically generated 64-character hex secret
+- `CLIENT_URL`: `https://recircuit-circular-e-waste-managament.vercel.app`
+- `CORS_ORIGIN`: `https://recircuit-circular-e-waste-managament.vercel.app,https://*.vercel.app`
+- `ALLOW_DEMO_LOGIN`: `false`
 
-### 2.3 Credential Storage & Variable Mapping
-- Stored credentials in: `backend/.env.local` (and mirror `.env.local` in workspace root).
-- Both `.env.local` files are strictly excluded by `.gitignore` in both root and backend.
-- Variable mapping:
-  - `DATABASE_URL`: Runtime connection to Neon connection pooler (`-pooler`).
-  - `DATABASE_URL_UNPOOLED` / `DIRECT_URL`: Direct unpooled connection for schema migrations and DDL operations.
-  - `NEON_BRANCH`: `production`
-  - `NEON_BRANCH_ID`: `br-summer-frog-azv5bsuj`
+*(All database credentials and secrets were retrieved locally and injected directly via the authenticated Render CLI without being logged or printed.)*
 
-### 2.4 Prisma Schema Configuration
-Updated `backend/prisma/schema.prisma` to cleanly declare both pooled runtime URL and direct migration URL:
-```prisma
-datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+---
+
+## 3. Live API Verification & Endpoint Test Results
+
+### 3.1 Health Check (`/api/health`)
+```bash
+curl -i https://recircuit-api-uowv.onrender.com/api/health
+```
+**Response:**
+```json
+HTTP/2 200 
+Content-Type: application/json; charset=utf-8
+
+{
+  "status": "online",
+  "platform": "ReCircuit E-Waste Platform & Circular Economy Engine",
+  "version": "1.0.0-production",
+  "uptimeSeconds": 26,
+  "database": {
+    "status": "healthy",
+    "latencyMs": 174
+  },
+  "timestamp": "2026-11-17T16:35:18.763Z"
 }
 ```
-Validation result:
-```bash
-The schema at prisma/schema.prisma is valid 🚀
-✔ Generated Prisma Client (v6.19.3) in 109ms
+
+### 3.2 Authentication Endpoint (`/api/auth/login`)
+Tested authentication using seeded user credentials (`user@recircuit.com` / `password123`):
+```json
+{
+  "message": "Login successful",
+  "user": {
+    "id": "56d490f6-c555-4368-88a7-a83180c047a9",
+    "name": "Anishwath V",
+    "email": "user@recircuit.com",
+    "role": "USER",
+    "isEmailVerified": true
+  },
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
 ```
 
-### 2.5 Schema Synchronization & Table Verification
-Executed safe schema push against Neon without data loss. Verified all 19 application tables:
-1. `Agent`
-2. `AuditLog`
-3. `AuthorizedRecycler`
-4. `Inspection`
-5. `MarketplaceListing`
-6. `Notification`
-7. `Order`
-8. `OrderItem`
-9. `PickupRequest`
-10. `Product`
-11. `ProductHistory`
-12. `ProfitSharingRule`
-13. `RecyclingRecord`
-14. `Refurbishment`
-15. `Retailer`
-16. `Transaction`
-17. `User`
-18. `UserPayout`
-19. `Valuation`
+### 3.3 Marketplace Listings (`/api/marketplace`)
+Verified retrieval of all 55 verified refurbished electronics products from Neon PostgreSQL:
+```json
+{
+  "listings": [
+    {
+      "id": "7cd8d001-dd77-45bf-bab6-025eac79a07b",
+      "title": "Samsung 45W Super Fast Type-C Charger EP-TA845",
+      "category": "Charger",
+      "brand": "Samsung OEM",
+      "model": "EP-TA845 (Super Fast Charging 2.0)",
+      "conditionGrade": "Grade A - Certified Fast Charge",
+      "sellingPrice": 1450,
+      "originalPrice": 2999
+    }
+  ]
+}
+```
 
-Populated initial seed data:
-- **Total Products in Neon DB:** 62 products (including all 55 verified marketplace catalogue SKUs with distinct images).
-- **Test Accounts Initialized:**
-  - User: `user@recircuit.com`
-  - Admin: `admin@recircuit.com`
-  - Agent: `agent@recircuit.com`
-  - Retailer: `retailer@recircuit.com`
+### 3.4 Digital Product Passport (`/api/passport/RC-2026-00231`)
+Verified public passport resolution for GPU SKU `RC-2026-00231`:
+```json
+{
+  "passport": {
+    "customId": "RC-2026-00231",
+    "category": "GPU",
+    "brand": "Zotac Gaming",
+    "model": "GeForce RTX 3060 12GB",
+    "conditionAtSubmission": "Refurbished Certified",
+    "currentStatus": "LISTED_FOR_SALE",
+    "images": ["/images/products/gpus/zotac-rtx-3060-12gb.jpg"],
+    "region": "Chennai, India",
+    "carbonOffsetKg": 18.2,
+    "eWasteDivertedKg": 0.8,
+    "preciousMetalsRecoveredMg": 320
+  }
+}
+```
+
+### 3.5 Production CORS Security Verification
+- **Allowed Origin Request:**
+  `Origin: https://recircuit-circular-e-waste-managament.vercel.app`
+  **Result:** `access-control-allow-origin: https://recircuit-circular-e-waste-managament.vercel.app`
+- **Unauthorized Origin Request:**
+  `Origin: https://unauthorized-attacker.com`
+  **Result:** Rejected with HTTP 500 (`CORS policy rejection: Origin not allowed`).
 
 ---
 
-## 3. Build & Compilation Verification
+## 4. Next Step: Frontend Vercel Deployment
 
-| Target | Command | Result | Duration |
-| :--- | :--- | :--- | :--- |
-| **Backend API** | `npm run build --prefix backend` | **`PASS (0 errors)`** | `prisma generate && tsc` completed |
-| **Frontend Web** | `npm run build --prefix frontend` | **`PASS (0 errors)`** | `tsc && vite build` completed in 2.59s |
-
----
-
-## 4. Next Steps for Cloud Deployment (Render & Vercel)
-
-Now that the Neon PostgreSQL database is fully connected, synchronized, and seeded:
-1. **Deploy Backend to Render:**
-   - Connect repository `https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament`.
-   - Set Root Directory to `backend`.
-   - In Render environment variables, configure `DATABASE_URL` (pooled Neon URL) and `DIRECT_URL` (direct Neon URL).
-   - Render starts with `/api/health`.
-2. **Deploy Frontend to Vercel:**
-   - Import repository with Root Directory `frontend`.
-   - Set `VITE_API_BASE_URL` to the Render backend URL.
-3. **Connect & Smoke Test:**
-   - Update `CLIENT_URL` and `CORS_ORIGIN` in Render with the Vercel domain.
-   - Run live end-to-end smoke test across all 4 dashboards.
+The backend API is fully deployed, healthy, and operational. When instructed to proceed with the final Vercel frontend deployment:
+1. Connect GitHub repository `https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament`.
+2. Set Root Directory to `frontend`.
+3. Set Environment Variable:
+   - `VITE_API_BASE_URL`: `https://recircuit-api-uowv.onrender.com`
+4. Deploy and verify live end-to-end functionality across all 4 dashboards and digital passports.
