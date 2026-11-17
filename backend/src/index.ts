@@ -16,7 +16,16 @@ import adminRoutes from './routes/admin.routes.js';
 import passportRoutes from './routes/passport.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 
+import fs from 'fs';
+
+// 1. Load default .env
 dotenv.config();
+
+// 2. Load .env.local if present (e.g. Neon CLI credentials or local overrides)
+const localEnvPath = path.join(process.cwd(), '.env.local');
+if (fs.existsSync(localEnvPath)) {
+  dotenv.config({ path: localEnvPath, override: true });
+}
 
 const app = express();
 const PORT = process.env.PORT || 5001;

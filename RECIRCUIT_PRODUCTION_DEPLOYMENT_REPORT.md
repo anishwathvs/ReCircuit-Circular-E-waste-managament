@@ -167,3 +167,4 @@ If a rollback is ever needed:
    ```
 3. **Render / Vercel Rollback:**
    Use the instant 1-click rollback feature in the Render and Vercel dashboards to revert to the previous deployment.
+

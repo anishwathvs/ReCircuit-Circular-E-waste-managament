@@ -44,3 +44,5 @@ yarn-error.log*
 __pycache__/
 *.py[cod]
 scripts/__pycache__/
+
+.neon

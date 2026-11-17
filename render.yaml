@@ -15,6 +15,8 @@ services:
         value: 10000
       - key: DATABASE_URL
         sync: false
+      - key: DIRECT_URL
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_REFRESH_SECRET
@@ -25,3 +27,4 @@ services:
         sync: false
       - key: ALLOW_DEMO_LOGIN
         value: "false"
+
