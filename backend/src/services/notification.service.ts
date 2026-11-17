@@ -54,7 +54,7 @@ export const notifyUser = async (payload: NotificationPayload): Promise<void> =>
               ${
                 payload.link
                   ? `<div style="margin-top: 20px;">
-                      <a href="http://localhost:5173${payload.link}" style="display: inline-block; padding: 10px 20px; background-color: #084D36; color: #FFFFFF; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px;">View in Dashboard</a>
+                      <a href="${(process.env.CLIENT_URL || 'https://recircuit-frontend.vercel.app').replace(/\/+$/, '')}${payload.link}" style="display: inline-block; padding: 10px 20px; background-color: #084D36; color: #FFFFFF; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 13px;">View in Dashboard</a>
                     </div>`
                   : ''
               }
@@ -66,12 +66,12 @@ export const notifyUser = async (payload: NotificationPayload): Promise<void> =>
           </div>
         `;
 
-        await sendTransactionalEmail({
+        sendTransactionalEmail({
           to: email,
           subject: `[ReCircuit] ${payload.title}`,
           html: emailHtml,
           text: `${payload.title}\n\n${payload.message}`,
-        });
+        }).catch((err) => console.error('Transactional email send error:', err));
       }
     }
   } catch (error) {

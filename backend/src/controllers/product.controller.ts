@@ -74,20 +74,21 @@ export const submitProduct = async (req: AuthRequest, res: Response): Promise<vo
 
     // Generate guaranteed unique sequential Custom ID: RC-2026-XXXXX
     const lastProduct = await prisma.product.findFirst({
-      orderBy: { createdAt: 'desc' },
+      where: { customId: { startsWith: 'RC-2026-' } },
+      orderBy: { customId: 'desc' },
       select: { customId: true },
     });
     let nextNum = 300;
     if (lastProduct?.customId) {
-      const match = lastProduct.customId.match(/RC-\d{4}-(\d+)/);
+      const match = lastProduct.customId.match(/RC-2026-(\d+)/);
       if (match) {
-        nextNum = parseInt(match[1], 10) + 1;
+        nextNum = Math.max(300, parseInt(match[1], 10) + 1);
       }
     }
     let customId = `RC-2026-${String(nextNum).padStart(5, '0')}`;
-    while (await prisma.product.findUnique({ where: { customId } })) {
-      nextNum++;
-      customId = `RC-2026-${String(nextNum).padStart(5, '0')}`;
+    const exists = await prisma.product.findUnique({ where: { customId } });
+    if (exists) {
+      customId = `RC-2026-${String(nextNum + Math.floor(Math.random() * 1000) + 1).padStart(5, '0')}`;
     }
 
     const requestId = `REQ-${Math.floor(2800 + Math.random() * 1000)}`;

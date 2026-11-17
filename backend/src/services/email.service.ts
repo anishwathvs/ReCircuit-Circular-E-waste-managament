@@ -20,22 +20,8 @@ const getTransporter = async () => {
       auth: { user: SMTP_USER, pass: SMTP_PASS },
     });
   } else {
-    // In dev / test sandbox, create an Ethereal test account or simulated logger
-    try {
-      const testAccount = await nodemailer.createTestAccount();
-      transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
-        secure: false,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass,
-        },
-      });
-    } catch {
-      // Fallback null transporter: logs to console
-      transporter = null;
-    }
+    // In production or when credentials not configured, use simulated logger to avoid network delay
+    transporter = null;
   }
 
   return transporter;
