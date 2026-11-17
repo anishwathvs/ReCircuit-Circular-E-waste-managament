@@ -1,11 +1,11 @@
 # RECIRCUIT — PRODUCTION DEPLOYMENT & CLOUD INTEGRATION REPORT
 
-**Execution Timestamp:** 2026-11-17T21:42:00+05:30  
+**Execution Timestamp:** 2026-11-17T21:56:00+05:30  
 **Platform Version:** ReCircuit v2.5 (Production Release)  
 **Target Repository:** [https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament.git](https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament.git)  
 **Active Branch:** `main`  
-**Latest Commit ID:** `b2be5fa` (`feat(deploy): Add safe Neon production database deployment and verification script`)  
-**Deployment Stage:** Stage 1 & 2 Complete (GitHub Synchronized & Verified, Cloud Configurations Ready)
+**Latest Commit ID:** `6a40a33` (`feat(db): Integrate Neon PostgreSQL serverless database with Prisma directUrl, CLI linking, and validation suite`)  
+**Deployment Stage:** Stage 1, 2 & 3 Complete (GitHub Synchronized, Neon PostgreSQL Integrated & Verified)
 
 ---
 
@@ -13,158 +13,109 @@
 
 | Component | Target Platform | Current Status | Notes |
 | :--- | :--- | :--- | :--- |
-| **GitHub Repository** | GitHub (`anishwathvs`) | **`DEPLOYED / PUSHED`** | 205 files, 31,684 lines committed to branch `main` |
-| **Local Database Safety** | Local PostgreSQL 17 | **`SECURED & BACKED UP`** | `backup_recircuit_local.sql` (242 KB) created via `pg_dump` |
-| **Secrets Protection** | Git & Repository | **`VERIFIED`** | All `.env` files and backups excluded via `.gitignore` |
-| **Production DB Architecture** | Neon Serverless PostgreSQL | **`READY FOR CONNECTION`** | Migration script `deploy-production-db.ts` prepared |
+| **GitHub Repository** | GitHub (`anishwathvs`) | **`DEPLOYED / PUSHED`** | Branch `main` up to date (`commit 6a40a33`) |
+| **Local Database Safety** | Local PostgreSQL 17 | **`SECURED & INTACT`** | `backup_recircuit_local.sql` (242 KB) preserved, zero local loss |
+| **Secrets Protection** | Git & Repository | **`VERIFIED`** | `.env.local` & `.env` excluded via multi-tier `.gitignore` |
+| **Production Database** | Neon Serverless PostgreSQL | **`CONNECTED & SYNCHRONIZED`** | Org: `org-sparkling-rice-08339866`, Project: `shy-dew-15332185` |
+| **Prisma Schema Config** | Pooled + Direct URL | **`CONFIGURED & VALID`** | `url = env("DATABASE_URL")`, `directUrl = env("DIRECT_URL")` |
+| **Database Schema** | Neon `production` branch | **`19/19 TABLES CREATED`** | Schema pushed safely without destructive commands |
+| **Database Seed** | 55 SKU Hardware Catalog | **`SEEDED (62 Products)`** | 55 verified marketplace SKUs + baseline test accounts |
 | **Backend API Service** | Render (Node.js/Express) | **`CONFIGURED`** | `render.yaml` Blueprint prepared with `/api/health` |
 | **Frontend Web Application** | Vercel (Vite/React SPA) | **`CONFIGURED`** | `vercel.json` SPA catch-all routing & `VITE_API_BASE_URL` |
-| **Product SKU Catalog** | 55 Distinct Hardware SKUs | **`VERIFIED (0 Duplicates)`** | Assets packaged in `frontend/public/images/products/` |
 | **QR Digital Passport** | Dynamic Production URL | **`CONFIGURED`** | Uses `CLIENT_URL` / `FRONTEND_URL` environment variables |
 
 ---
 
-## 2. GitHub Synchronization Verification
+## 2. Neon Serverless PostgreSQL Integration Details
 
-The full-stack ReCircuit monorepo has been committed and pushed to the official repository:
+### 2.1 Project & Branch Identity
+- **Organization ID:** `org-sparkling-rice-08339866`
+- **Project ID:** `shy-dew-15332185`
+- **Branch:** `production` (`br-summer-frog-azv5bsuj`)
+- **Region / Service:** `ap-southeast-1` (AWS Singapore) / `postgres`
+- **Host Endpoint:** `ep-dark-union-azh6owq3-pooler.c-3.ap-southeast-1.aws.neon.tech`
 
-- **Repository URL:** `https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament.git`
-- **Branch:** `main`
-- **Initial Monorepo Commit:** `8c840f5821a9ab9d1eb467cf55540d680f52eaed`
-- **Deployment Script Commit:** `b2be5fa8094aa927e85c156827a4d576a8b7921c`
-- **Objects Transferred:** 244 git objects, 12.81 MiB, delta compression complete.
+### 2.2 CLI Installation & Tooling
+- Installed Neon CLI v9.6.0 to user-global prefix `~/.npm-global/bin/neon`.
+- Neon agent skills installed into Antigravity: `neon`, `neon-postgres`, `neon-auth`, `neon-realtime`, `neon-functions`, `neon-object-storage`, `neon-ai-gateway`.
+- Created repository policy manifest `neon.ts`.
 
-### Strict Security Audit:
-- **Zero secrets committed:** `git diff --cached` confirmed no `.env` files staged.
-- **Protected by multi-tier `.gitignore`:** Root `.gitignore`, `backend/.gitignore`, and `frontend/.gitignore` actively exclude all environment configs, local databases, build folders (`dist/`), and `node_modules/`.
-- **Environment templates provided:**
-  - `backend/.env.example`: Safe production template with placeholders for `DATABASE_URL`, `JWT_SECRET`, `CLIENT_URL`, etc.
-  - `frontend/.env.example`: Template documenting `VITE_API_BASE_URL` and `VITE_GOOGLE_MAPS_API_KEY`.
+### 2.3 Credential Storage & Variable Mapping
+- Stored credentials in: `backend/.env.local` (and mirror `.env.local` in workspace root).
+- Both `.env.local` files are strictly excluded by `.gitignore` in both root and backend.
+- Variable mapping:
+  - `DATABASE_URL`: Runtime connection to Neon connection pooler (`-pooler`).
+  - `DATABASE_URL_UNPOOLED` / `DIRECT_URL`: Direct unpooled connection for schema migrations and DDL operations.
+  - `NEON_BRANCH`: `production`
+  - `NEON_BRANCH_ID`: `br-summer-frog-azv5bsuj`
 
----
+### 2.4 Prisma Schema Configuration
+Updated `backend/prisma/schema.prisma` to cleanly declare both pooled runtime URL and direct migration URL:
+```prisma
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+```
+Validation result:
+```bash
+The schema at prisma/schema.prisma is valid 🚀
+✔ Generated Prisma Client (v6.19.3) in 109ms
+```
 
-## 3. Local Database Preservation & Safety
+### 2.5 Schema Synchronization & Table Verification
+Executed safe schema push against Neon without data loss. Verified all 19 application tables:
+1. `Agent`
+2. `AuditLog`
+3. `AuthorizedRecycler`
+4. `Inspection`
+5. `MarketplaceListing`
+6. `Notification`
+7. `Order`
+8. `OrderItem`
+9. `PickupRequest`
+10. `Product`
+11. `ProductHistory`
+12. `ProfitSharingRule`
+13. `RecyclingRecord`
+14. `Refurbishment`
+15. `Retailer`
+16. `Transaction`
+17. `User`
+18. `UserPayout`
+19. `Valuation`
 
-In accordance with safety requirements:
-1. **Full Database Backup Created:** Executed `pg_dump` on local database `recircuit` to `backup_recircuit_local.sql` (242 KB).
-2. **Zero Local Data Loss:** No destructive database migrations, reset commands, or `--accept-data-loss` flags were executed.
-3. **Isolated Production Pipeline:** Created `backend/scripts/deploy-production-db.ts` to ensure all production schema migrations and seed operations run strictly against the Neon PostgreSQL URL and cannot accidentally target `localhost`.
-
----
-
-## 4. Production Architecture & Configuration Files
-
-### 4.1 Frontend — Vercel Configuration
-- **File:** `frontend/vercel.json`
-- **SPA Rewrite Rule:**
-  ```json
-  {
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/index.html"
-      }
-    ]
-  }
-  ```
-- **Environment Variable Integration:**
-  Updated `frontend/src/services/api.ts` to dynamically resolve the API base:
-  ```typescript
-  const getApiBase = () => {
-    const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL;
-    if (!envUrl) return '/api';
-    const clean = envUrl.replace(/\/+$/, '');
-    return clean.endsWith('/api') ? clean : `${clean}/api`;
-  };
-  ```
-- **Type Declaration:** Added `frontend/src/vite-env.d.ts` declaring `VITE_API_BASE_URL`, `VITE_API_URL`, and `VITE_GOOGLE_MAPS_API_KEY`.
-- **Production Build:** Passes cleanly in 2.75s (`tsc && vite build`).
-
-### 4.2 Backend — Render Configuration
-- **File:** `render.yaml`
-- **Service Specs:**
-  - **Type:** Web Service
-  - **Name:** `recircuit-api`
-  - **Runtime:** Node.js
-  - **Plan:** Free
-  - **Root Directory:** `backend`
-  - **Build Command:** `npm install && npx prisma generate && npm run build`
-  - **Start Command:** `npm run start` (`node dist/index.js`)
-  - **Health Check Path:** `/api/health`
-- **Production Build:** Passes cleanly with 0 errors (`prisma generate && tsc`).
-
-### 4.3 QR Code & Digital Product Passport
-- **File:** `backend/src/utils/qr.ts`
-- **Production URL Resolver:**
-  ```typescript
-  export const generateProductQR = async (
-    productId: string,
-    customId: string,
-    clientUrl: string = process.env.CLIENT_URL || process.env.FRONTEND_URL || 'http://localhost:5173'
-  ) => {
-    const passportUrl = `${clientUrl}/passport/${customId}`;
-    // Forest green QR modules (#084D36) matching ReCircuit brand palette
-  ```
-- Guarantees that when `CLIENT_URL` is set to the Vercel production domain, all generated QR codes link directly to `https://<vercel-domain>/passport/<customId>`.
+Populated initial seed data:
+- **Total Products in Neon DB:** 62 products (including all 55 verified marketplace catalogue SKUs with distinct images).
+- **Test Accounts Initialized:**
+  - User: `user@recircuit.com`
+  - Admin: `admin@recircuit.com`
+  - Agent: `agent@recircuit.com`
+  - Retailer: `retailer@recircuit.com`
 
 ---
 
-## 5. Next Steps for Cloud Activation
+## 3. Build & Compilation Verification
 
-To bring the live cloud services online without third-party CLI credential interception, follow these steps:
-
-### Step 1: Neon Serverless PostgreSQL (Database)
-1. Go to [https://console.neon.tech](https://console.neon.tech) and create a free project named `recircuit-prod`.
-2. Copy your pooled connection string (with `sslmode=require`), e.g.:
-   `postgresql://neondb_owner:***@ep-***.us-east-2.aws.neon.tech/neondb?sslmode=require`
-3. Provide the connection string or run:
-   ```bash
-   cd backend && PRODUCTION_DATABASE_URL="your-neon-connection-string" npx tsx scripts/deploy-production-db.ts --seed
-   ```
-   This will synchronize all Prisma tables and populate the 55 verified marketplace products and demo accounts.
-
-### Step 2: Render Web Service (Backend API)
-1. Go to [https://dashboard.render.com](https://dashboard.render.com) -> **New** -> **Web Service**.
-2. Connect your GitHub repository: `https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament`.
-3. Configure settings:
-   - **Root Directory:** `backend`
-   - **Build Command:** `npm install && npx prisma generate && npm run build`
-   - **Start Command:** `npm run start`
-   - **Health Check Path:** `/api/health`
-4. Set Environment Variables:
-   - `DATABASE_URL`: *(Your Neon PostgreSQL connection string)*
-   - `NODE_ENV`: `production`
-   - `JWT_SECRET`: *(A secure 64-character random string)*
-   - `JWT_REFRESH_SECRET`: *(A secure 64-character random string)*
-   - `CLIENT_URL`: `https://recircuit.vercel.app` *(or your Vercel URL)*
-   - `CORS_ORIGIN`: `https://recircuit.vercel.app`
-   - `ALLOW_DEMO_LOGIN`: `false`
-5. Click **Create Web Service**. Once deployed, copy your backend URL (e.g. `https://recircuit-api.onrender.com`).
-
-### Step 3: Vercel Web Deployment (Frontend)
-1. Go to [https://vercel.com/new](https://vercel.com/new) and import `ReCircuit-Circular-E-waste-managament`.
-2. Configure settings:
-   - **Framework Preset:** Vite
-   - **Root Directory:** `frontend`
-3. Add Environment Variable:
-   - `VITE_API_BASE_URL`: `https://recircuit-api.onrender.com` *(your Render URL)*
-4. Click **Deploy**. Vercel will build and assign your production URL.
-5. In Render, update `CLIENT_URL` and `CORS_ORIGIN` to match your exact Vercel URL.
+| Target | Command | Result | Duration |
+| :--- | :--- | :--- | :--- |
+| **Backend API** | `npm run build --prefix backend` | **`PASS (0 errors)`** | `prisma generate && tsc` completed |
+| **Frontend Web** | `npm run build --prefix frontend` | **`PASS (0 errors)`** | `tsc && vite build` completed in 2.59s |
 
 ---
 
-## 6. Rollback Instructions
+## 4. Next Steps for Cloud Deployment (Render & Vercel)
 
-If a rollback is ever needed:
-1. **GitHub Rollback:**
-   ```bash
-   git revert HEAD
-   git push origin main
-   ```
-2. **Local Database Restore:**
-   ```bash
-   psql -U reethika -d recircuit < backup_recircuit_local.sql
-   ```
-3. **Render / Vercel Rollback:**
-   Use the instant 1-click rollback feature in the Render and Vercel dashboards to revert to the previous deployment.
-
+Now that the Neon PostgreSQL database is fully connected, synchronized, and seeded:
+1. **Deploy Backend to Render:**
+   - Connect repository `https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament`.
+   - Set Root Directory to `backend`.
+   - In Render environment variables, configure `DATABASE_URL` (pooled Neon URL) and `DIRECT_URL` (direct Neon URL).
+   - Render starts with `/api/health`.
+2. **Deploy Frontend to Vercel:**
+   - Import repository with Root Directory `frontend`.
+   - Set `VITE_API_BASE_URL` to the Render backend URL.
+3. **Connect & Smoke Test:**
+   - Update `CLIENT_URL` and `CORS_ORIGIN` in Render with the Vercel domain.
+   - Run live end-to-end smoke test across all 4 dashboards.
