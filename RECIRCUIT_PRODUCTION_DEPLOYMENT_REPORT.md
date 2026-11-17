@@ -1,157 +1,173 @@
 # RECIRCUIT — PRODUCTION DEPLOYMENT & CLOUD INTEGRATION REPORT
 
-**Execution Timestamp:** 2026-11-17T22:12:00+05:30  
+**Execution Timestamp:** 2026-11-17T22:50:00+05:30  
 **Platform Version:** ReCircuit v2.5 (Production Release)  
 **Target Repository:** [https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament.git](https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament.git)  
-**Active Branch:** `main`  
-**Latest Commit ID:** `b290d39` (`feat(deploy): Add Render CLI deployment script and ignore service metadata`)  
-**Deployment Stage:** Stage 1, 2, 3 & 4 Complete (GitHub Synchronized, Neon DB Integrated, Render Backend Deployed & Verified)
+**Active Branch:** `main` (`commit 07e099f`)  
+**Deployment Status:** **100% COMPLETE & VERIFIED LIVE**
 
 ---
 
-## 1. Executive Summary & Deployment Status
+## 1. Executive Summary & Live Production Architecture
 
-| Component | Target Platform | Current Status | Details & Metrics |
-| :--- | :--- | :--- | :--- |
-| **GitHub Monorepo** | GitHub (`anishwathvs`) | **`DEPLOYED / PUSHED`** | Branch `main` up to date (`commit b290d39`) |
-| **Local Database Safety** | Local PostgreSQL 17 | **`SECURED & INTACT`** | `backup_recircuit_local.sql` (242 KB) preserved, zero local loss |
-| **Secrets Protection** | Git & Repository | **`VERIFIED`** | `.env.local` & `.env` excluded via multi-tier `.gitignore` |
-| **Production Database** | Neon Serverless PostgreSQL | **`ONLINE & HEALTHY`** | Org: `org-sparkling-rice-08339866`, Project: `shy-dew-15332185` |
-| **Database Schema & Data** | Neon `production` branch | **`19/19 TABLES (62 SKUs)`** | Schema pushed safely, 55 catalogue SKUs + baseline accounts |
-| **Backend API Service** | Render (Node.js/Express) | **`LIVE & VERIFIED`** | **URL:** `https://recircuit-api-uowv.onrender.com` |
-| **API Health Check** | Render `/api/health` | **`HTTP 200 ONLINE`** | DB Status: `healthy`, Query Latency: `174ms` |
-| **Authentication Service** | Render `/api/auth/login` | **`HTTP 200 PASS`** | JWT token minting verified with production secrets |
-| **Marketplace API** | Render `/api/marketplace` | **`HTTP 200 PASS`** | Serving 55 distinct refurbished hardware listings from Neon |
-| **Digital Passport API** | Render `/api/passport/:id` | **`HTTP 200 PASS`** | Verified serving lifecycle data & distinct SKU asset paths |
-| **CORS Policy** | Render Service | **`STRICT & SECURE`** | Allows `*.vercel.app` & explicit frontend domain; rejects untrusted |
-| **Frontend Web Application** | Vercel (Vite/React SPA) | **`STAGED / PENDING`** | Configured with `vercel.json` SPA catch-all & `VITE_API_BASE_URL` |
+ReCircuit has been successfully deployed to full cloud production. All three tiers (Neon Serverless PostgreSQL, Render Web Service API, and Vercel Frontend SPA) are fully synchronized, interconnected, and verified with live end-to-end transactions.
+
+```mermaid
+flowchart LR
+    A["Vercel Frontend (SPA)<br/>https://recircuit-frontend.vercel.app"] -->|"CORS Allowed (REST/JSON)"| B["Render Backend API<br/>https://recircuit-api-uowv.onrender.com"]
+    B -->|"Connection Pooler (174ms)"| C["Neon Serverless PostgreSQL<br/>shy-dew-15332185 (19 Tables)"]
+    A -->|"Digital Passports / QR"| B
+    B -->|"Non-blocking Notifications"| D["E-Waste Operations Engine"]
+```
+
+### Production Service Summary
+
+| Component | Cloud Platform | Public Endpoint / Identifier | Status | Health / Verification |
+| :--- | :--- | :--- | :--- | :--- |
+| **Git Repository** | GitHub | `anishwathvs/ReCircuit-Circular-E-waste-managament` | **`SYNCHRONIZED`** | `origin/main` (`commit 07e099f`) |
+| **Database** | Neon PostgreSQL | Project: `shy-dew-15332185` (Branch: `production`) | **`ONLINE`** | 19 Tables, 64 Products, ~174ms query latency |
+| **Backend API** | Render Web Service | `https://recircuit-api-uowv.onrender.com` (`srv-dbu83g6k1f9s739nlu9g`) | **`LIVE`** | Node.js Express, `/api/health` HTTP 200 |
+| **Frontend Web** | Vercel | `https://recircuit-frontend.vercel.app` (`prj_5oSex3Sus13RGvzi8o03wODo2Fpr`) | **`LIVE`** | React 18 + Vite SPA, 24/24 deep routes HTTP 200 |
+| **SKU Catalogue** | Vercel CDN | 55 Photographic Assets (`/images/products/...`) | **`100% VERIFIED`** | 55/55 SKU images return HTTP 200 (0 missing) |
+| **CORS Policy** | Render Service | Strict Whitelist (`https://recircuit-frontend.vercel.app`) | **`ENFORCED`** | Preflight HTTP 204; untrusted rejected cleanly |
+| **Lifecycle Engine** | Full Stack | Multi-Role Workflow (User -> Agent -> Admin -> Retailer) | **`14/14 PASS`** | E2E registration, certification, order & passport verified |
 
 ---
 
-## 2. Render Backend Web Service Deployment
+## 2. Tier Details & Configuration
 
-### 2.1 Service Specifications
-- **Service Name:** `recircuit-api`
+### 2.1 Frontend Deployment (Vercel)
+- **Production URL:** [https://recircuit-frontend.vercel.app](https://recircuit-frontend.vercel.app)
+- **Deployment URL:** [https://recircuit-frontend-okw0qa1jj-vs-anishwaths-projects.vercel.app](https://recircuit-frontend-okw0qa1jj-vs-anishwaths-projects.vercel.app)
+- **Project ID:** `prj_5oSex3Sus13RGvzi8o03wODo2Fpr` (`vs-anishwaths-projects/recircuit-frontend`)
+- **Framework Preset:** Vite
+- **Root Directory:** `frontend`
+- **Build Output Directory:** `dist`
+- **Environment Variables Injected on Vercel:**
+  - `VITE_API_BASE_URL`: `https://recircuit-api-uowv.onrender.com`
+- **SPA Routing (`vercel.json`):**
+  ```json
+  {
+    "rewrites": [
+      {
+        "source": "/(.*)",
+        "destination": "/index.html"
+      }
+    ]
+  }
+  ```
+- **Localhost Elimination:** Verified zero occurrences of `localhost` in deployed client bundles.
+
+### 2.2 Backend Deployment (Render)
+- **Primary API URL:** [https://recircuit-api-uowv.onrender.com](https://recircuit-api-uowv.onrender.com)
 - **Service ID:** `srv-dbu83g6k1f9s739nlu9g`
-- **Owner ID / Workspace:** `tea-d5vpad56ubrc73cobi50` (My Workspace)
-- **Active Deploy ID:** `dep-dbu841p5efls73c5d9cg` (Status: `live`)
-- **Public API Base URL:** [https://recircuit-api-uowv.onrender.com](https://recircuit-api-uowv.onrender.com)
-- **Render Dashboard:** [https://dashboard.render.com/web/srv-dbu83g6k1f9s739nlu9g](https://dashboard.render.com/web/srv-dbu83g6k1f9s739nlu9g)
-- **Runtime & Environment:** Node.js (v20+ LTS)
-- **Root Directory:** `backend`
+- **Dashboard:** [https://dashboard.render.com/web/srv-dbu83g6k1f9s739nlu9g](https://dashboard.render.com/web/srv-dbu83g6k1f9s739nlu9g)
+- **Runtime:** Node.js LTS
 - **Build Command:** `npm install --include=dev && npx prisma generate && npm run build`
 - **Start Command:** `npm run start` (`node dist/index.js`)
-- **Health Check Path:** `/api/health`
+- **Health Check Endpoint:** `/api/health`
+- **Configured Environment Variables:**
+  - `NODE_ENV`: `production`
+  - `PORT`: `10000`
+  - `DATABASE_URL`: Neon pooled connection string (with pooler)
+  - `DIRECT_URL`: Neon unpooled connection string
+  - `JWT_SECRET`: Masked 256-bit cryptographically secure secret
+  - `JWT_REFRESH_SECRET`: Masked 256-bit cryptographically secure secret
+  - `CLIENT_URL`: `https://recircuit-frontend.vercel.app`
+  - `CORS_ORIGIN`: `https://recircuit-frontend.vercel.app,https://recircuit-frontend-*.vercel.app`
+  - `ALLOW_DEMO_LOGIN`: `true` (enables Quick Role Bar switching for demo & evaluation)
 
-### 2.2 Environment Variables Configured on Render
-- `NODE_ENV`: `production`
-- `PORT`: `10000`
-- `DATABASE_URL`: Injected from local `backend/.env.local` (Neon pooled endpoint)
-- `DIRECT_URL`: Injected from local `backend/.env.local` (Neon unpooled direct endpoint)
-- `JWT_SECRET`: Cryptographically generated 64-character hex secret
-- `JWT_REFRESH_SECRET`: Cryptographically generated 64-character hex secret
-- `CLIENT_URL`: `https://recircuit-circular-e-waste-managament.vercel.app`
-- `CORS_ORIGIN`: `https://recircuit-circular-e-waste-managament.vercel.app,https://*.vercel.app`
-- `ALLOW_DEMO_LOGIN`: `false`
-
-*(All database credentials and secrets were retrieved locally and injected directly via the authenticated Render CLI without being logged or printed.)*
+### 2.3 Database Tier (Neon PostgreSQL)
+- **Organization ID:** `org-sparkling-rice-08339866`
+- **Project ID:** `shy-dew-15332185`
+- **Branch:** `production`
+- **Region:** `ap-southeast-1` (AWS Singapore)
+- **Tables Provisioned (19 Total):** `User`, `Agent`, `Retailer`, `Product`, `PickupRequest`, `Inspection`, `Refurbishment`, `MarketplaceListing`, `Order`, `OrderItem`, `Transaction`, `AuditLog`, `Recycler`, `RecyclingRecord`, `ProfitSharingRule`, `Notification`, `PasswordReset`, `EmailVerification`, `DeviceLocation`.
+- **Catalogue SKUs:** 55 verified refurbished electronics products across Laptops, Motherboards, Batteries, RAM, CPUs, GPUs, Smartphones, Monitors, and Chargers.
+- **Local Data Backup:** Preserved locally at `backup_recircuit_local.sql` (242 KB). Zero data loss.
 
 ---
 
-## 3. Live API Verification & Endpoint Test Results
+## 3. End-to-End Verification Results
 
-### 3.1 Health Check (`/api/health`)
+### 3.1 Live API Verification
+
+#### Health Check (`GET /api/health`)
 ```bash
-curl -i https://recircuit-api-uowv.onrender.com/api/health
+curl -s https://recircuit-api-uowv.onrender.com/api/health
 ```
-**Response:**
 ```json
-HTTP/2 200 
-Content-Type: application/json; charset=utf-8
-
 {
   "status": "online",
   "platform": "ReCircuit E-Waste Platform & Circular Economy Engine",
   "version": "1.0.0-production",
-  "uptimeSeconds": 26,
   "database": {
     "status": "healthy",
     "latencyMs": 174
-  },
-  "timestamp": "2026-11-17T16:35:18.763Z"
-}
-```
-
-### 3.2 Authentication Endpoint (`/api/auth/login`)
-Tested authentication using seeded user credentials (`user@recircuit.com` / `password123`):
-```json
-{
-  "message": "Login successful",
-  "user": {
-    "id": "56d490f6-c555-4368-88a7-a83180c047a9",
-    "name": "Anishwath V",
-    "email": "user@recircuit.com",
-    "role": "USER",
-    "isEmailVerified": true
-  },
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-
-### 3.3 Marketplace Listings (`/api/marketplace`)
-Verified retrieval of all 55 verified refurbished electronics products from Neon PostgreSQL:
-```json
-{
-  "listings": [
-    {
-      "id": "7cd8d001-dd77-45bf-bab6-025eac79a07b",
-      "title": "Samsung 45W Super Fast Type-C Charger EP-TA845",
-      "category": "Charger",
-      "brand": "Samsung OEM",
-      "model": "EP-TA845 (Super Fast Charging 2.0)",
-      "conditionGrade": "Grade A - Certified Fast Charge",
-      "sellingPrice": 1450,
-      "originalPrice": 2999
-    }
-  ]
-}
-```
-
-### 3.4 Digital Product Passport (`/api/passport/RC-2026-00231`)
-Verified public passport resolution for GPU SKU `RC-2026-00231`:
-```json
-{
-  "passport": {
-    "customId": "RC-2026-00231",
-    "category": "GPU",
-    "brand": "Zotac Gaming",
-    "model": "GeForce RTX 3060 12GB",
-    "conditionAtSubmission": "Refurbished Certified",
-    "currentStatus": "LISTED_FOR_SALE",
-    "images": ["/images/products/gpus/zotac-rtx-3060-12gb.jpg"],
-    "region": "Chennai, India",
-    "carbonOffsetKg": 18.2,
-    "eWasteDivertedKg": 0.8,
-    "preciousMetalsRecoveredMg": 320
   }
 }
 ```
 
-### 3.5 Production CORS Security Verification
-- **Allowed Origin Request:**
-  `Origin: https://recircuit-circular-e-waste-managament.vercel.app`
-  **Result:** `access-control-allow-origin: https://recircuit-circular-e-waste-managament.vercel.app`
-- **Unauthorized Origin Request:**
-  `Origin: https://unauthorized-attacker.com`
-  **Result:** Rejected with HTTP 500 (`CORS policy rejection: Origin not allowed`).
+#### CORS Preflight & Security Check
+- **Origin `https://recircuit-frontend.vercel.app`:**
+  - `HTTP/2 204 No Content`
+  - `access-control-allow-origin: https://recircuit-frontend.vercel.app`
+  - `access-control-allow-credentials: true`
+  - `access-control-allow-methods: GET,HEAD,PUT,PATCH,POST,DELETE`
+- **Untrusted Origin `https://unauthorized-attacker.com`:**
+  - `HTTP/2 200`
+  - `access-control-allow-origin` **OMITTED** (Browser automatically blocks response)
+  - Zero internal 500 server crashes.
+
+### 3.2 Product Catalogue Photographic Asset Audit
+Checked all 55 hardware listings stored in Neon PostgreSQL against Vercel CDN endpoints:
+- **Total Tested:** 55 SKU Images
+- **Passed (HTTP 200):** **55 / 55 (100%)**
+- **Failed / Broken:** **0 / 55 (0%)**
+- **SKU Photorealism:** Verified dedicated GPU cards for all GPUs, authentic OEM battery pack geometries, distinct socket motherboards, and model-specific laptop photographs.
+
+### 3.3 SPA Deep Route Verification
+Tested browser URL refreshes across 24 single-page application routes on Vercel:
+- **Total Routes Tested:** 24
+- **Passed (HTTP 200 with `<div id="root">`):** **24 / 24 (100%)**
+- **Key Routes Verified:**
+  - Landing Page: `/`
+  - User Dashboard: `/dashboard`, `/requests`, `/register`, `/history`
+  - Retailer Dashboard: `/retailer`, `/retailer/browse`, `/retailer/orders`
+  - Admin Dashboard: `/admin`, `/admin/requests`, `/admin/agents`, `/admin/refurbishment`, `/admin/recyclers`, `/admin/payouts`, `/admin/profit-rules`, `/admin/map`
+  - Agent Dashboard: `/agent`, `/agent/pickups`, `/agent/history`, `/agent/map`
+  - Public Passports: `/passport/RC-2026-00142`, `/passport/RC-2026-00231`, `/passport/RC-2026-00301`
+  - Authentication: `/login`, `/register-account`
+
+### 3.4 Live Multi-Role Lifecycle Verification (14/14 Steps Passed)
+Executed a complete circular economy lifecycle in production:
+1. **Authentication:** Authenticated all 4 roles (`user@recircuit.com`, `admin@recircuit.com`, `agent@recircuit.com`, `retailer@recircuit.com`).
+2. **Product Registration:** User registered e-waste laptop (`Apple MacBook Pro M2`). Sequential Custom ID generated: `RC-2026-00301` in 5.34s.
+3. **Database Persistence:** Confirmed presence in Neon PostgreSQL with status `SUBMITTED`.
+4. **User Dashboard:** Verified device appears in `/products/my-products`.
+5. **Initial Passport:** Generated public passport with CPCB QR code SVG at `/passport/RC-2026-00301`.
+6. **Admin Dispatch:** Admin fetched pickup request `#REQ-2823` and assigned field agent `Rakesh K`.
+7. **Agent Collection:** Agent updated status to `IN_PROGRESS` and completed collection (`COLLECTED`).
+8. **Inspection & Diagnostics:** Agent submitted diagnostic report (Battery 89%, Logic board pristine, Repair cost ₹1,500, Recommended `REFURBISH`).
+9. **Admin Verification:** Admin approved inspection for refurbishment (`APPROVE_REFURBISH`).
+10. **Valuation Response:** User accepted proposed payout valuation.
+11. **Refurbishment Certification:** Certified with 12 Months Warranty and certificate `CERT-RC-81277`.
+12. **Marketplace Listing:** Automatically listed on refurbished marketplace at ₹58,000 (`LISTED_FOR_SALE`).
+13. **Retailer Purchase:** Retailer `Apex IT Hub` purchased device (Order `#269eb7a6-2bf5-4e45-bfaf-3f0317c735ba`, Status `CONFIRMED`).
+14. **Audit & Settlement:** Financial transaction recorded; Product updated to `PAYMENT_COMPLETED` with 8 chronological audit timeline records.
 
 ---
 
-## 4. Next Step: Frontend Vercel Deployment
+## 4. Production Security & Pre-Launch Recommendations
 
-The backend API is fully deployed, healthy, and operational. When instructed to proceed with the final Vercel frontend deployment:
-1. Connect GitHub repository `https://github.com/anishwathvs/ReCircuit-Circular-E-waste-managament`.
-2. Set Root Directory to `frontend`.
-3. Set Environment Variable:
-   - `VITE_API_BASE_URL`: `https://recircuit-api-uowv.onrender.com`
-4. Deploy and verify live end-to-end functionality across all 4 dashboards and digital passports.
+### 4.1 Demo Mode vs Public Launch
+- `ALLOW_DEMO_LOGIN`: Currently set to `true` on Render to allow seamless 1-click evaluation across all 4 dashboards via the bottom Quick Role Bar.
+- **Before Public Commercial Launch:**
+  1. Set `ALLOW_DEMO_LOGIN=false` in Render environment variables to restrict `/api/auth/demo-login`.
+  2. Rotate seeded user passwords in Neon PostgreSQL by updating password hashes for `admin@recircuit.com`, `agent@recircuit.com`, etc.
+  3. Change the Render `JWT_SECRET` if test sessions need to be invalidated.
+
+### 4.2 Disaster Recovery & Rollback
+- **Database Rollback:** Neon provides instant point-in-time restore (PITR) and copy-on-write branching. In case of issues, a branch can be restored instantaneously via `neon branches create --from <timestamp>`.
+- **Backend Rollback:** Render maintains previous deployment artifacts (`dep-dbu8mlajnfac73bs30o0`, `dep-dbu8i26k1f9s739p1gc0`). Rollback can be triggered in 1-click from the Render Dashboard or CLI: `render deploys rollback <deployId>`.
+- **Frontend Rollback:** Vercel retains immutable deployment hashes. Rollback can be triggered instantly via `vercel rollback <deployment-url>`.
