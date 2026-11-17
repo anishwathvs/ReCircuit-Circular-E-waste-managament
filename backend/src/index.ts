@@ -38,20 +38,43 @@ app.use(
   })
 );
 
-// 2. CORS configuration
+// 2. CORS configuration with strict production origin enforcement
 const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(',')
+  ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
   : ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000'];
 
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps, curl, server-to-server)
-      if (!origin || allowedOrigins.includes(origin) || origin.startsWith('http://localhost:')) {
-        callback(null, true);
-      } else {
-        callback(null, true); // Permissive in development, configurable via CORS_ORIGIN
+      if (!origin) {
+        return callback(null, true);
       }
+
+      // In development, allow localhost origins
+      if (process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost:')) {
+        return callback(null, true);
+      }
+
+      // Match explicit allowed origins or wildcard patterns
+      const isAllowed = allowedOrigins.some((allowed) => {
+        if (allowed === origin) return true;
+        if (allowed.includes('*')) {
+          const regex = new RegExp('^' + allowed.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$');
+          return regex.test(origin);
+        }
+        return false;
+      }) || (process.env.NODE_ENV === 'production' && origin.endsWith('.vercel.app') && origin.includes('recircuit'));
+
+      if (isAllowed) {
+        return callback(null, true);
+      }
+
+      if (process.env.NODE_ENV === 'production') {
+        return callback(new Error(`CORS policy rejection: Origin ${origin} not allowed`));
+      }
+
+      callback(null, true);
     },
     credentials: true,
   })
